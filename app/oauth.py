@@ -41,14 +41,19 @@ def google_logged_in(blueprint, token):
         flash("Successfully signed in.")
 
     else:
-        # Create a new local user account for this user
-        user = User(email=info["email"])
-        # Associate the new local user account with the OAuth token
+        query = User.query.filter_by(email=info['email'])
+        try:
+            user = query.one()
+        except NoResultFound:
+            flash('User not found.', category='error')
+            return False
+        
+        # Associate the local user account with the OAuth token
         oauth.user = user
         # Save and commit our database models
-        db.session.add_all([user, oauth])
+        db.session.add(oauth)
         db.session.commit()
-        # Log in the new local user account
+        # Log in to the local user account
         login_user(user)
         flash("Successfully signed in.")
 
