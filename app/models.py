@@ -8,7 +8,11 @@ db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(128), unique=True, nullable=False)
+    # Use for Oauth 2 authentication via Google
     email = db.Column(db.String(256), unique=True)
+    # Generate with something like secrets.token_hex(32)
+    api_key = db.Column(db.String(256))
 
 
 class OAuth(OAuthConsumerMixin, db.Model):
