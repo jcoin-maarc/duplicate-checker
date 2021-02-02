@@ -4,3 +4,4 @@ flask-sqlalchemy
 flask-login>=0.5.0
 blinker
 python-dotenv>=0.15.0
+passlib>=1.7.4
