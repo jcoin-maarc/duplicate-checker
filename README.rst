@@ -8,6 +8,14 @@ initials, date of birth and assigned sex.
 Setup
 =====
 
+Step 0: Install Dependencies
+----------------------------
+
+Create Python virtual environment in whichever way you prefer, and install
+required packages::
+
+    pip install -r requirements.txt
+
 Step 1: Get OAuth credentials from Google
 -----------------------------------------
 
