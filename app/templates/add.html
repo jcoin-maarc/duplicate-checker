@@ -1,0 +1,59 @@
+{% from 'bootstrap/table.html' import render_table %}
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container p-5">
+    You are logged in as {{ current_user.username }}.
+    {% if not dups %}
+        <div class="pt-3">No other participants with these characteristics have been recruited.</div>
+    {% else %}
+        <div class="pt-3"></div>
+        <div class="pt-3 alert alert-danger" role="alert">The following participants with these characteristics have already been recruited:</div>
+        <div class="pt-3">
+            {{ render_table(dups,
+                            titles=[('site','Site'),
+                                    ('recruited_by','Recruited By'),
+                                    ('recruitment_date','Recruited On')],
+                            table_classes='table-sm',
+                            responsive=True)
+            }}
+        </div>
+    {% endif %}
+    <div class="pt-3">
+        <form action="/add" method="post" class="form" role="form">
+            <input id="{{ form.csrf_token.id }}" name="{{ form.csrf_token.id }}" type="hidden" value="{{ form.csrf_token.data }}">
+            <div class="form-group required">
+                <label class="form-control-label" for="{{ form.first_initial.id }}">{{ form.first_initial.label }}</label> <input class="form-control" id="{{ form.first_initial.id }}" name="{{ form.first_initial.id }}" required type="text" value="{{ form.first_initial.data }}" readonly>
+            </div>
+            <div class="form-group required">
+                <label class="form-control-label" for="{{ form.last_initial.id }}">{{ form.last_initial.label }}</label> <input class="form-control" id="{{ form.last_initial.id }}" name="{{ form.last_initial.id }}" required type="text" value="{{ form.last_initial.data }}" readonly>
+            </div>
+            <div class="form-group required">
+                <label class="form-control-label" for="{{ form.dob.id }}">{{ form.dob.label }}</label> <input class="form-control" id="{{ form.dob.id }}" name="{{ form.dob.id }}" required type="text" value="{{ form.dob.data.strftime('%m/%d/%Y') }}" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-control-label" for="{{ form.sex.id }}">{{ form.sex.label }}</label>
+                {% if form.sex.data == 'Male' %}
+                    <div class="form-check">
+                        <input checked class="form-check-input" id="{{ form.sex.id }}-0" name="{{ form.sex.id }}" type="radio" value="Male"> <label class="form-check-label" for="{{ form.sex.id }}-0">Male</label>
+                    </div>
+                    <div class="form-check">
+                        <input disabled class="form-check-input" id="{{ form.sex.id }}-1" name="{{ form.sex.id }}" type="radio" value="Female"> <label class="form-check-label" for="{{ form.sex.id }}-1">Female</label>
+                    </div>
+                {% elif form.sex.data == 'Female' %}
+                    <div class="form-check">
+                        <input disabled class="form-check-input" id="{{ form.sex.id }}-0" name="{{ form.sex.id }}" type="radio" value="Male"> <label class="form-check-label" for="{{ form.sex.id }}-0">Male</label>
+                    </div>
+                    <div class="form-check">
+                        <input checked class="form-check-input" id="{{ form.sex.id }}-1" name="{{ form.sex.id }}" type="radio" value="Female"> <label class="form-check-label" for="{{ form.sex.id }}-1">Female</label>
+                    </div>
+                {% endif %}
+            {% if dups %}
+                </div><input class="btn btn-danger btn-md" id="{{ form.submit.id }}" name="{{ form.submit.id }}" type="submit" value="{{ form.submit.label.text }}">
+            {% else %}
+                </div><input class="btn btn-primary btn-md" id="{{ form.submit.id }}" name="{{ form.submit.id }}" type="submit" value="{{ form.submit.label.text }}">
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

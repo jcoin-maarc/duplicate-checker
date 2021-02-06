@@ -1,14 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
-from passlib.context import CryptContext
-
-PASSLIB_CONTEXT = CryptContext(
-    schemes=['bcrypt'],
-    deprecated='auto',
-)
+from sqlalchemy.sql import func
+from sqlalchemy.ext.hybrid import hybrid_method
+from config import Config
+from cryptography.fernet import Fernet
 
 db = SQLAlchemy()
+config = Config()
+fernet = Fernet(config.PARTICIPANT_INFO_KEY)
 
 class Site(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,36 +31,31 @@ class OAuth(OAuthConsumerMixin, db.Model):
 
 class Participant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    info_hash = db.Column(db.Text, nullable=False)
-    recruitment_date = db.Column(db.DateTime, nullable=False)
+    info_encrypted = db.Column(db.LargeBinary, nullable=False)
+    recruitment_date = db.Column(db.DateTime, server_default=func.now())
     recruited_by = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     user = db.relationship(User)
     
-    def __init__(self, info=None, info_hash=None, **kwargs):
-        if info_hash is None and info is not None:
-            info_hash = self.generate_hash(info)
-        super().__init__(info_hash=info_hash, **kwargs)
+    def __init__(self, info=None, info_encrypted=None, **kwargs):
+        if info_encrypted is None and info is not None:
+            info_encrypted = fernet.encrypt(info.encode())
+        super().__init__(info_encrypted=info_encrypted, **kwargs)
     
     @property
     def info(self):
-        raise AttributeError("Participant.info is write-only")
+        raise AttributeError('Participant.info is write-only')
     
     @info.setter
     def info(self, info):
-        self.info_hash = self.generate_hash(info)
+        self.info_encrypted = fernet.encrypt(info.encode())
     
-    def verify_info(self, info):
-        return PASSLIB_CONTEXT.verify(info, self.info_hash)
-    
-    @staticmethod
-    def generate_hash(info):
-        """Generate secure hash of participant info"""
-        return PASSLIB_CONTEXT.hash(info.encode('utf8'))
-
+    @hybrid_method
+    def match(self, info):
+        return fernet.decrypt(self.info_encrypted) == info.encode()
 
 # setup login manager
 login_manager = LoginManager()
-login_manager.login_view = "google.login"
+login_manager.login_view = 'google.login'
 
 @login_manager.user_loader
 def load_user(user_id):

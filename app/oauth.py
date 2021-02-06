@@ -6,14 +6,12 @@ from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from sqlalchemy.orm.exc import NoResultFound
 from .models import db, User, OAuth
 
-
 blueprint = make_google_blueprint(
     scope=["profile", "email"],
     storage=SQLAlchemyStorage(OAuth, db.session, user=current_user),
 )
 
-
-# create/login local user on successful OAuth login
+# Create/login local user on successful OAuth login
 @oauth_authorized.connect_via(blueprint)
 def google_logged_in(blueprint, token):
     if not token:
@@ -60,8 +58,7 @@ def google_logged_in(blueprint, token):
     # Disable Flask-Dance's default behavior for saving the OAuth token
     return False
 
-
-# notify on OAuth provider error
+# Notify on OAuth provider error
 @oauth_error.connect_via(blueprint)
 def google_error(blueprint, message, response):
     msg = ("OAuth error from {name}! " "message={message} response={response}").format(
