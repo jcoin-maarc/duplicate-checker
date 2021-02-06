@@ -1,3 +1,4 @@
 *.pyc
 .env
 app.sqlite3
+/docs/_build
