@@ -47,7 +47,7 @@ The API has just two endpoints, as described below.
                             each indicating the location where the participant
                             was recruited ("site"), the date on which the
                             participant was entered ("recruitment_date"), and
-                            the user who entered the participant (("recruited_by").
+                            the user who entered the participant ("recruited_by").
    :>json string message: In case of an unsuccessful request, indicates nature
                           of the error
    :statuscode 200: Successful request

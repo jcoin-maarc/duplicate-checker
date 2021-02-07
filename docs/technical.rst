@@ -50,8 +50,8 @@ would be essentially lost.
 
 Participant information is encrypted using the
 `Fernet <https://github.com/fernet/spec/blob/master/Spec.md>`_ symmetric
-encryption (also known as "secret key") method as implemented in the Python
-language `cryptography <https://cryptography.io/en/latest/index.html#>`_
+encryption method as implemented in the Python language
+`cryptography <https://cryptography.io/en/latest/index.html#>`_
 package. Fernet uses 128-bit AES in CBC mode and PKCS7 padding, with HMAC
 using SHA256 for authentication.
 
@@ -75,6 +75,6 @@ application itself:
    the browser is closed (i.e., the user must re-authenticate before accessing
    the application again)
 3. All input is validated and no raw queries of the database are performed,
-   reducing the chance of an SQL Injection vulnerability
+   reducing the likelihood of an SQL Injection vulnerability
 4. Vulnerability to a Cross-Site Request Forgery (CSRF) attack is reduced by
    using a CSRF token with all form submission
