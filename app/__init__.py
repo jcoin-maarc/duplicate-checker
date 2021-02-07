@@ -38,7 +38,7 @@ def unauthorized():
     """Respond to unauthorized requests"""
     
     if request.form.get('api_key'):
-        return jsonify({'message':'Unauthorized request'})
+        return jsonify({"message":"Unauthorized request"}), 401
     
     return redirect(url_for('index'))
 
@@ -91,7 +91,7 @@ def check():
                           'recruitment_date':recruitment_date})
         
         if api_key:
-            return jsonify({'duplicates':dups})
+            return jsonify({"duplicates":dups})
         
         else:
             form.submit.label.text = ('Add participant' if not dups
@@ -101,7 +101,7 @@ def check():
     else:
         
         if api_key:
-            return jsonify({'message':'Request invalid'})
+            return jsonify({"message":"Invalid request"}), 400
         else:
             return render_template('home.html', form=form)
 
@@ -121,11 +121,11 @@ def add():
         db.session.commit()
         
         if api_key:
-            return jsonify({'message':'Participant added'})
+            return jsonify({"message":"Participant added"})
         else:
             flash('Participant added')
     
     if api_key:
-        return jsonify({'message':'Request invalid'})
+        return jsonify({"message":"Invalid request"}), 400
     else:
         return redirect(url_for('index'))
