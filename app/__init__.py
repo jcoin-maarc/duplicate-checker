@@ -6,11 +6,12 @@ from .oauth import blueprint
 from .cli import create_db
 from flask_bootstrap import Bootstrap4
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, RadioField, SubmitField
+from wtforms import StringField, DateField, RadioField, SubmitField, ValidationError
 from wtforms.validators import InputRequired, length, Regexp
 from cryptography.fernet import Fernet
 from pytz import timezone
 from flask import jsonify
+from datetime import date
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -59,6 +60,12 @@ class ParticipantInfoForm(FlaskForm):
                     render_kw={'type':'text', 'placeholder':'mm/dd/yyyy'})
     sex = RadioField('Assigned sex', [InputRequired()], choices=['Male','Female'])
     submit = SubmitField(label='Check for duplicates')
+    
+    def validate_dob(form, field):
+        if field.data and (field.data > date.today()):
+            raise ValidationError('Date of birth cannot be in the future')
+        elif field.data and (field.data < date(1910, 1, 1)):
+            raise ValidationError('Date of birth cannot be before 01/01/1910')
 
 @app.route('/logout')
 @login_required
