@@ -47,8 +47,9 @@ class ParticipantInfoForm(FlaskForm):
                                 length(max=1), Regexp('[a-zA-Z]')])
     last_initial = StringField('Last initial', [InputRequired(),
                                length(max=1), Regexp('[a-zA-Z]')])
+    # N.B. Need to specify type="text" to suppress Safari's automatic datepicker
     dob = DateField('Date of birth', [InputRequired()], format='%m/%d/%Y',
-                    render_kw={'placeholder':'mm/dd/yyyy'})
+                    render_kw={'type':'text', 'placeholder':'mm/dd/yyyy'})
     sex = RadioField('Assigned sex', [InputRequired()], choices=['Male','Female'])
     submit = SubmitField(label='Check for duplicates')
 
