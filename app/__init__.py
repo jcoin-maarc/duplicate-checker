@@ -14,6 +14,13 @@ from flask import jsonify
 
 app = Flask(__name__)
 app.config.from_object(Config)
+# N.B. Uncomment to run behind reverse proxy, and start with
+# SCRIPT_NAME=/<prefix> gunicorn --bind=192.168.0.112:9090 -w 4 'app:app'
+# Also, make sure to preserve prefix through proxy.
+# See https://dlukes.github.io/flask-wsgi-url-prefix.html for more info.
+# app.wsgi_app = ProxyFix(
+#     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+# )
 app.register_blueprint(blueprint, url_prefix='/login')
 app.cli.add_command(create_db)
 db.init_app(app)
