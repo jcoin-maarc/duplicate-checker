@@ -12,6 +12,7 @@ from cryptography.fernet import Fernet
 from pytz import timezone
 from flask import jsonify
 from datetime import date
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
 app.config.from_object(Config)

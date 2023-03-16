@@ -20,7 +20,7 @@
         </div>
     {% endif %}
     <div class="pt-3">
-        <form action="/add" method="post" class="form" role="form">
+        <form action="{{ url_for('add') }}" method="post" class="form" role="form">
             <input id="{{ form.csrf_token.id }}" name="{{ form.csrf_token.id }}" type="hidden" value="{{ form.csrf_token.data }}">
             <div class="form-group required">
                 <label class="form-control-label" for="{{ form.first_initial.id }}">{{ form.first_initial.label }}</label> <input class="form-control" id="{{ form.first_initial.id }}" name="{{ form.first_initial.id }}" required type="text" value="{{ form.first_initial.data }}" readonly>
